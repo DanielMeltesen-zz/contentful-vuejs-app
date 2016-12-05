@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>VueJS ES5 Starter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+
+    <!-- External styles -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/github.min.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style type="text/css" media="screen">
+      [v-cloak] { display: none; }
+      .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s
+      }
+      .fade-enter, .fade-leave-active {
+        opacity: 0
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/x-template" id="my-item">
+      <tr class="item" v-bind:class="{'active': isFavorite}">
+        <td>
+          <button v-if="!isFavorite" v-on:click="addToFavorites" class="btn btn-sm btn-success">+</button>
+          <button v-if="isFavorite" v-on:click="removeFromFavorites" class="btn btn-sm btn-default">-</button>
+        </td>
+        <td>{{character.rank}}</td>
+        <td>{{character.name}}</td>
+        <td>{{character.movie}}</td>
+        <td>{{character.year}}</td>
+        <td>
+          <button class="btn btn-default btn-xs" v-on:click="active = !active">
+            <span v-if="active" >-</span>
+            <span v-if="!active" >...</span>
+          </button>
+          <span v-if="active">{{character.description}}</span>
+        </td>
+      </tr>
+    </script>
+
+    <script type="text/x-template" id="my-filter">
+      <div class="filter">
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th v-on:click="sortBy('rank')"><span class="btn btn-sm btn-default"># <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th v-on:click="sortBy('name')"><span class="btn btn-sm btn-default">Name <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th v-on:click="sortBy('movie')"><span class="btn btn-sm btn-default">Movie <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th v-on:click="sortBy('year')"><span class="btn btn-sm btn-default">Year <span class="glyphicon glyphicon-triangle-bottom small"></span></span></th>
+              <th><span class="btn btn-sm btn-default" disabled>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="character in tarantino" :key="character.rank" is="my-item" v-bind:character="character"></tr>
+          </tbody>
+        </table>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="my-character">
+      <div class="panel-body" v-if="character">
+        <h4>{{character.name}}</h4>
+        <h5>{{character.movie}} <small>{{character.year}}</small></h5>
+        <p>{{character.description}}</p>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="my-favorites">
+      <ol class="list-group">
+        <li class="list-group-item" v-for="character in favorites" :key="character.name">
+          <h5>
+            <button v-on:click="removeFromFavorites(character)" class="btn btn-sm btn-default">-</button>
+            {{character.name}} <small>{{character.movie}}</small>
+          </h5>
+        </li>
+        <li class="list-group-item" v-if="!favorites.length">
+          Your favorites list is empty
+        </li>
+      </ol>
+    </script>
+
+    <div class="container">
+      <div id="app">
+        <div class="navbar navbar-default">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="https://github.com/raahede/vuejs-es5-starter">VueJS ES5 Starter</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8">
+            <div is="my-filter"></div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <ul class="nav nav-pills">
+                  <li is="router-link" to="/" exact tag="li" active-class="active"><a>Favorites</a></li>
+                  <li is="router-link" to="/character" tag="li" active-class="active"><a>Random Character</a></li>
+                </ul>
+              </div>
+              <transition name="fade" mode="out-in">
+                <router-view></router-view>
+              </transition>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./build/assets/js/vendor/vue.js"></script>
+    <script src="./build/assets/js/vendor/vue-resource.js"></script>
+    <script src="./build/assets/js/vendor/vue-router.js"></script>
+    <script src="./build/assets/js/vendor/vuex.js"></script>
+    <script src="./build/assets/js/app.js"></script>
+  </body>
+</html>
