@@ -18,7 +18,7 @@ var WATCH_PATHS = {
 // Build tasks
 // ---------------------------------------
 
-gulp.task('build', ['scripts:production', 'html']);
+gulp.task('build', ['scripts:production', 'html:production']);
 gulp.task('build:debug', ['scripts:debug', 'html']);
 
 // Dynamic tasks

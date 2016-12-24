@@ -10,8 +10,14 @@ var PATHS = [
 
 var DEST = 'build';
 
-// Copy all vendor scripts to assets folder
+// Copy html to build folder folder
 gulp.task('html', function() {
   return gulp.src(PATHS)
+    .pipe(gulp.dest(DEST));
+});
+
+gulp.task('html:production', function() {
+  return gulp.src(PATHS)
+    .pipe($.htmlReplace({js: 'assets/js/app.min.js'}))
     .pipe(gulp.dest(DEST));
 });
