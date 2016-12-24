@@ -4,6 +4,7 @@
 
 # Ignore generated files
 build/
+!build/.gitkeep
 
 # Never mind them node modules
 node_modules/
