@@ -18,8 +18,8 @@ var WATCH_PATHS = {
 // Build tasks
 // ---------------------------------------
 
-gulp.task('build', ['scripts:production']);
-gulp.task('build:debug', ['scripts:debug']);
+gulp.task('build', ['scripts:production', 'html']);
+gulp.task('build:debug', ['scripts:debug', 'html']);
 
 // Dynamic tasks
 // ---------------------------------------
@@ -29,7 +29,7 @@ gulp.task('build:debug', ['scripts:debug']);
 gulp.task('serve', function(){
   browserSync.init({
     server: {
-      baseDir: '.',
+      baseDir: 'build',
       index: 'index.html'
     }
   });
@@ -38,7 +38,7 @@ gulp.task('serve', function(){
 // Watch files for changes, reload browser on change
 gulp.task('watch', function() {
   gulp.watch(WATCH_PATHS.JAVASCRIPTS, ['scripts:debug', browserSync.reload]);
-  gulp.watch(WATCH_PATHS.HTML, ['build:debug', browserSync.reload]);
+  gulp.watch(WATCH_PATHS.HTML, ['html', browserSync.reload]);
 });
 
 
@@ -48,7 +48,7 @@ gulp.task('watch', function() {
 // Runs all of the above tasks and then waits for files to change
 gulp.task('default', function() {
   runSequence(
-    ['scripts:debug'],
+    ['scripts:debug', 'html'],
     ['serve', 'watch']
   );
 });

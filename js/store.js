@@ -4,8 +4,13 @@ var store = (function(Vue, Vuex) {
   // root state object.
   // each Vuex instance is just a single state tree.
   var state = {
-    tarantino: [],
-    favorites: []
+    api: {
+      space: 'wpk17fsuxh8l',
+      access_token: '272b121abec98bcd8650d604bb626f2e1bb52ce70ba02906db3bab3319886f3f',
+      content_types: 'https://cdn.contentful.com/spaces/wpk17fsuxh8l/content_types',
+      entries: 'https://cdn.contentful.com/spaces/wpk17fsuxh8l/entries/',
+      assets: 'https://cdn.contentful.com/spaces/wpk17fsuxh8l/assets/'
+    }
   };
 
   // mutations are operations that actually mutates the state.
@@ -13,54 +18,68 @@ var store = (function(Vue, Vuex) {
   // first argument, followed by additional payload arguments.
   // mutations must be synchronous and can be recorded by plugins
   // for debugging purposes.
-  var mutations = {
-    setTarantino: function(state, data) {
-      state.tarantino = data;
-    },
-    sortTarantino: function(state, sortBy) {
-      function compare(a,b) {
-        if (a[sortBy] < b[sortBy])
-          return -1;
-        if (a[sortBy] > b[sortBy])
-          return 1;
-        return 0;
-      }
-      state.tarantino.sort(compare);
-    },
-    addFavorite: function(state, character) {
-      state.favorites.push(character);
-    },
-    removeFavorite: function(state, character) {
-      var i = state.favorites.indexOf(character);
-      if(i !== -1) state.favorites.splice(i, 1);
-    }
-  };
+  var mutations = {};
 
   // actions are functions that causes side effects and can involve
   // asynchronous operations.
   var actions = {
-    sortTarantino: function(context, sortBy) {
-      return context.commit('sortTarantino', sortBy);
+    getContentTypes: function(context) {
+      return Vue.http.get(
+        context.state.api.content_types,
+        {
+          params: {
+            access_token : context.state.api.access_token
+          }
+        }
+      ).then(function(response) {
+        // Parse response as JSON
+        return response.json();
+      });
     },
-    addFavorite: function(context, character) {
-      return context.commit('addFavorite', character);
+    getEntries: function(context, data) {
+      return Vue.http.get(
+        context.state.api.entries,
+        {
+          params: {
+            access_token : context.state.api.access_token,
+            content_type : data.content_type
+          }
+        }
+      ).then(function(response) {
+        // Parse response as JSON
+        return response.json();
+      });
     },
-    removeFavorite: function(context, character) {
-      return context.commit('removeFavorite', character);
+    getEntry: function(context, data) {
+      return Vue.http.get(
+        context.state.api.entries + data.entry_id,
+        {
+          params: {
+            access_token : context.state.api.access_token
+          }
+        }
+      ).then(function(response) {
+        // Parse response as JSON
+        return response.json();
+      });
     },
-    getTarantino: function(context) {
-      return Vue.http.get('./data.json').then(function(response){
-        context.commit('setTarantino', response.body);
+    getAsset: function(context, data) {
+      return Vue.http.get(
+        context.state.api.assets + data.asset_id,
+        {
+          params: {
+            access_token : context.state.api.access_token
+          }
+        }
+      ).then(function(response) {
+        // Parse response as JSON
+        return response.json();
       });
     }
   };
 
   // getters are functions
-  var getters = {
-    randomTarantino: function(state) {
-      return state.tarantino[Math.floor(Math.random() * state.tarantino.length)];
-    }
-  };
+  var getters = {};
 
   // A Vuex instance is created by combining the state, mutations, actions,
   // and getters.
