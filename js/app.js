@@ -223,6 +223,9 @@
         // Reset coverImage
         this.image = null;
 
+        _self.$route.meta.title = entry.fields.title;
+        _self.$root.setTitle();
+
         if(typeof(entry.fields.images) !== 'undefined' && entry.fields.images.length) {
           this.$store.dispatch('getAsset', {
             asset_id: entry.fields.images[0].sys.id
@@ -237,33 +240,21 @@
   var router = new VueRouter({
     routes: [
       {
-        path: '*',
+        path: '/',
         component: RecipeList,
         name: 'recipe-list',
-        children: [
-          {
-            path: '/:contentType/:entryId',
-            name: 'recipe',
-            component: Recipe,
-            children: [
-              // {
-              //   path: '/:contentType/image/:entryId',
-              //   name: 'image',
-              //   component: Image
-              // },
-              // {
-              //   path: '/:contentType/author/:entryId',
-              //   name: 'author',
-              //   component: Author
-              // },
-              // {
-              //   path: '/:contentType/gallery/:entryId',
-              //   name: 'gallery',
-              //   component: Gallery
-              // }
-            ]
-          }
-        ]
+        meta: { title: 'Opskrifter' }
+      },
+      {
+        path: '/:contentType/:entryId',
+        name: 'recipe',
+        component: Recipe
+      },
+      {
+        path: '/shopping-list',
+        name: 'shopping-list',
+        component: ShoppingList,
+        meta: { title: 'Indkøbsliste' }
       }
     ]
   });
@@ -271,10 +262,32 @@
   new Vue({
     el: '#app',
     store: store,
+    router: router,
+    data: function() {
+      return {
+        routeTitle: ''
+      };
+    },
+    computed: {
+      hasFavorites: function() {
+        return this.$store.state.favorites.length > 0;
+      }
+    },
+    watch: {
+      '$route': 'setTitle'
+    },
+    methods: {
+      setTitle: function() {
+        this.routeTitle = this.$route.meta.title;
+      }
+    },
+    created: function() {
+      this.setTitle();
+    },
     components: {
       'recipe-list': RecipeList,
+      'recipe': Recipe,
       'shopping-list': ShoppingList
-    },
-    router: router
+    }
   });
 })();

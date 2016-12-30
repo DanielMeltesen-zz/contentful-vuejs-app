@@ -7,11 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ratchet/2.0.2/css/ratchet.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ratchet/2.0.2/css/ratchet-theme-ios.min.css">
 
     <style type="text/css" media="screen">
       [v-cloak] { display: none; }
+      table { width: 100%; }
+      td.table-view-cell {
+        padding-left: 0.25em;
+        padding-right: 0.25em;
+      }
+      td.table-view-cell::first-child {
+        padding-left: 0;
+      }
+      td.table-view-cell::last-child {
+        padding-right: 0;
+      }
       .fade-enter-active, .fade-leave-active {
         transition: opacity .5s
       }
@@ -22,30 +33,22 @@
   </head>
   <body>
     <script type="text/x-template" id="recipe-list-template">
-      <div class="contentful row">
-        <div class="col-md-4">
-          <div v-if="recipes" class="list-group">
-            <a v-for="recipe in recipes.items" is="router-link" v-bind:to="{ name: 'recipe', params: { entryId: recipe.sys.id, contentType: recipe.sys.contentType.sys.id }}" tag="a" class="list-group-item" active-class="active">{{recipe.fields.title}}</a>
-          </div>
-        </div>
-        <router-view></router-view>
-      </div>
+      <ul class="table-view" v-if="recipes">
+        <li class="table-view-cell">
+          <a v-for="recipe in recipes.items" is="router-link" v-bind:to="{ name: 'recipe', params: { entryId: recipe.sys.id, contentType: recipe.sys.contentType.sys.id }}" tag="a" class="navigate-right" active-class="active">{{recipe.fields.title}}</a>
+        </li>
+      </ul>
     </script>
 
     <script type="text/x-template" id="shopping-list-template">
-      <div class="panel panel-default" v-if="favorites.length">
-        <div class="panel-heading">
-          <h3 class="panel-title">Favorites</h3>
-        </div>
-        <ol class="list-group">
-          <li class="list-group-item" v-for="favorite in favorites" :key="favorite.name">
-            <h5>
-              <button v-on:click="removeFromFavorites(favorite)" class="btn btn-sm btn-default">-</button>
-              {{favorite.fields.name}} <small>{{favorite.fields.amount}} {{favorite.fields.unit}}</small>
-            </h5>
-          </li>
-        </ol>
-      </div>
+      <ul class="table-view" v-if="favorites">
+        <li v-for="favorite in favorites" :key="favorite.name" class="table-view-cell">
+          {{favorite.fields.name}} <small>{{favorite.fields.amount}} {{favorite.fields.unit}}</small>
+          <button v-on:click="removeFromFavorites(favorite)" class="btn btn-negative">
+            <span class="icon icon-close"></span>
+          </button>
+        </li>
+      </ul>
     </script>
 <!-- 
     <script type="text/x-template" id="my-entries">
@@ -79,62 +82,55 @@
     </script> -->
 
     <script type="text/x-template" id="ingredient-template">
-      <tr v-if="entry">
-        <td>
+      <tr v-if="entry" class="table-view-cell">
+        <td class="table-view-cell">
           <img class="embed-responsive-item" v-if="image" v-bind:src="image.fields.file.url + '?w=40&h=30'" v-bind:alt="image.fields.title">
         </td>
-        <td>{{entry.fields.amount}}</td>
-        <td>{{entry.fields.unit}}</td>
-        <td>{{entry.fields.name}}</td>
+        <td class="table-view-cell">{{entry.fields.amount}}</td>
+        <td class="table-view-cell">{{entry.fields.unit}}</td>
+        <td class="table-view-cell">{{entry.fields.name}}</td>
         <td>
-          <button v-if="!isFavorite" v-on:click="addToFavorites" class="btn btn-sm btn-success">+</button>
-          <button v-if="isFavorite" v-on:click="removeFromFavorites" class="btn btn-sm btn-default">-</button>
+          <button v-if="!isFavorite" v-on:click="addToFavorites" class="btn">
+            <span class="icon icon-star"></span>
+          </button>
+          <button v-if="isFavorite" v-on:click="removeFromFavorites" class="btn btn-positive">
+            <span class="icon icon-star-filled"></span>
+          </button>
         </td>
       </tr>
     </script>
 
     <script type="text/x-template" id="recipe-template">
-      <div class="recipe col-md-8" v-if="entry">
-        <div class="thumbnail">
-          <div class="embed-responsive embed-responsive-4by3">
-            <img class="embed-responsive-item" v-if="image" v-bind:src="image.fields.file.url" v-bind:alt="image.fields.title">
-          </div>
-          <div class="caption">
-            <h3>{{entry.fields.title}}</h3>
-            <div v-if="description" v-html="description"></div>
-            <table class="table">
-              <ingredient v-for="ingredient in entry.fields.ingredients" v-bind:entry-id="ingredient.sys.id"></ingredient>
-            </table>
+      <div class="recipe content-padded" v-if="entry">
+        <div class="slider" v-if="image">
+          <div class="slide-group">
+            <div class="slide">
+              <img class="embed-responsive-item" v-bind:src="image.fields.file.url + '?h=200'" v-bind:alt="image.fields.title">
+            </div>
           </div>
         </div>
+        <h3>{{entry.fields.title}}</h3>
+        <div v-if="description" v-html="description"></div>
+        <table v-if="entry.fields.ingredients">
+          <ingredient v-for="ingredient in entry.fields.ingredients" v-bind:entry-id="ingredient.sys.id"></ingredient>
+        </table>
       </div>
     </script>
 
-    <div class="container">
-      <div id="app">
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <a class="navbar-brand" href="https://github.com/raahede/contentful-vuejs-app">Vue.js + Contentful + Netlify</a>
-            </div>
-            <div class="collapse navbar-collapse">
-              <p class="navbar-text navbar-right"><a href="https://github.com/raahede" class="navbar-link">@Raahede</a></p>
-            </div>
-          </div>
-        </nav>
-        <div class="contentful row">
-          <div class="col-md-9">
-            <router-view></router-view>
-          </div>
-          <div class="col-md-3">
-            <shopping-list></shopping-list>
-          </div>
-        </div>
+    <div id="app">
+      <header class="bar bar-nav">
+        <a class="icon icon-list pull-left" is="router-link" v-bind:to="{ name: 'recipe-list'}"></a>
+        <a class="icon pull-right" v-bind:class="{ 'icon-star-filled' : hasFavorites }" is="router-link" v-bind:to="{ name: 'shopping-list'}"></a>
+        <h1 class="title" v-cloak>{{routeTitle}}</h1>
+      </header>
+      <div class="content">
+        <router-view></router-view>
       </div>
     </div>
 
     <!-- build:js -->
     <script src="assets/js/app.js"></script>
     <!-- endbuild -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ratchet/2.0.2/js/ratchet.min.js"></script>
   </body>
 </html>
