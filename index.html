@@ -34,8 +34,8 @@
   <body>
     <script type="text/x-template" id="recipe-list-template">
       <ul class="table-view" v-if="recipes">
-        <li class="table-view-cell">
-          <a v-for="recipe in recipes.items" is="router-link" v-bind:to="{ name: 'recipe', params: { entryId: recipe.sys.id, contentType: recipe.sys.contentType.sys.id }}" tag="a" class="navigate-right" active-class="active">{{recipe.fields.title}}</a>
+        <li v-for="recipe in recipes.items" class="table-view-cell">
+          <a is="router-link" v-bind:to="{ name: 'recipe', params: { entryId: recipe.sys.id, contentType: recipe.sys.contentType.sys.id }}" tag="a" class="navigate-right" active-class="active">{{recipe.fields.title}}</a>
         </li>
       </ul>
     </script>
