@@ -30,49 +30,6 @@
     }
   };
 
-  // var Entries = {
-  //   name: 'Entries',
-  //   template: '#my-entries',
-  //   data: function() {
-  //     return {
-  //       entries: null
-  //     };
-  //   },
-  //   computed: {
-  //     contentTypeName: function() {
-  //       var type;
-  //       switch(this.$route.params.contentType) {
-  //         case '1xYw5JsIecuGE68mmGMg20':
-  //           type = 'image';
-  //           break;
-  //         case '38nK0gXXIccQ2IEosyAg6C':
-  //           type = 'author';
-  //           break;
-  //         case '7leLzv8hW06amGmke86y8G':
-  //           type = 'gallery';
-  //           break;
-  //       }
-  //       return type;
-  //     }
-  //   },
-  //   created: function() {
-  //     this.getEntries();
-  //   },
-  //   methods: {
-  //     getEntries: function() {
-  //       var _self = this;
-  //       this.$store.dispatch('getEntries', {
-  //         content_type: _self.$route.params.contentType
-  //       }).then(function(data) {
-  //         _self.entries = data;
-  //       });
-  //     }
-  //   },
-  //   watch: {
-  //     '$route' : 'getEntries'
-  //   }
-  // };
-
   var Entry = {
     data: function() {
       return {
@@ -176,34 +133,6 @@
       }
     }
   });
-
-  // var Author = Vue.extend({
-  //   name: 'Author',
-  //   template: '#my-author',
-  //   mixins: [Entry],
-  //   data: function() {
-  //     return {
-  //       profilePhoto: null
-  //     };
-  //   },
-  //   methods: {
-  //     getEntryAssets: function(entry) {
-  //       var _self = this;
-  //       // Reset profilePhoto
-  //       this.profilePhoto = null;
-
-  //       this.$store.dispatch('getAsset', {
-  //         asset_id: entry.fields.profilePhoto.sys.id
-  //       }).then(function(data) {
-  //         _self.profilePhoto = data;
-  //       });
-
-  //       // client.getAsset(entry.fields.profilePhoto.sys.id).then(function (profilePhoto) {
-  //       //   _self.profilePhoto = profilePhoto;
-  //       // });
-  //     }
-  //   }
-  // });
 
   var Recipe = Vue.extend({
     name: 'Recipe',

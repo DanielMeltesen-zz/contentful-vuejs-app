@@ -50,36 +50,6 @@
         </li>
       </ul>
     </script>
-<!-- 
-    <script type="text/x-template" id="my-entries">
-      <div class="entries col-md-9">
-        <div class="row">
-          <div class="col-md-4">
-            <div v-if="entries" class="list-group">
-              <a v-for="entry in entries.items" is="router-link" v-bind:to="{ name: contentTypeName, params: { contentType: $route.params.contentType, entryId: entry.sys.id }}" exact tag="a" class="list-group-item" active-class="active">
-                <span v-if="entry.fields.title">{{entry.fields.title}}</span>
-                <span v-if="entry.fields.name">{{entry.fields.name}}</span>
-              </a>
-            </div>
-          </div>
-          <div class="col-md-8">
-            <router-view></router-view>
-          </div>
-        </div>
-      </div>
-    </script> -->
-
-    <!-- <script type="text/x-template" id="my-author">
-      <div class="author" v-if="entry">
-        <div class="thumbnail">
-          <img v-if="profilePhoto" v-bind:src="profilePhoto.fields.file.url" v-bind:alt="profilePhoto.fields.title">
-          <div class="caption">
-            <h3>{{entry.fields.name}}</h3>
-            <p>{{entry.fields.biography}}</p>
-          </div>
-        </div>
-      </div>
-    </script> -->
 
     <script type="text/x-template" id="ingredient-template">
       <tr v-if="entry" class="table-view-cell">
