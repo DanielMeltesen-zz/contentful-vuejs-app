@@ -84,6 +84,7 @@
           <table v-if="entry.fields.ingredients">
             <ingredient v-for="ingredient in entry.fields.ingredients" v-bind:entry-id="ingredient.sys.id"></ingredient>
           </table>
+          <br>
           <div v-if="description" v-html="description"></div>
         </div>
       </div>
