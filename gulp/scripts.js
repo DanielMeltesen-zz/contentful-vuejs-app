@@ -10,6 +10,7 @@ var VENDOR_PATHS = [
 
 var PATHS = [
   'js/vendor/vue.js',
+  'js/vendor/marked.js',
   'js/vendor/vuex.js',
   'js/vendor/vue-resource.js',
   'js/vendor/vue-router.js',

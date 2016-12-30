@@ -1,62 +1,77 @@
 (function() {
-  var ContentTypes = {
-    name: 'ContentTypes',
-    template: '#my-content-types',
+  var RecipeList = {
+    name: 'RecipeList',
+    template: '#recipe-list-template',
     data: function() {
       return {
-        contentTypes: null
+        recipes: null
       };
     },
     created: function() {
       var _self = this;
-      this.$store.dispatch('getContentTypes').then(function(data) {
-        _self.contentTypes = data;
+      this.$store.dispatch('getRecipes').then(function(data) {
+        _self.recipes = data;
       });
     }
   };
 
-  var Entries = {
-    name: 'Entries',
-    template: '#my-entries',
-    data: function() {
-      return {
-        entries: null
-      };
-    },
+  var ShoppingList = {
+    name: 'ShoppingList',
+    template: '#shopping-list-template',
     computed: {
-      contentTypeName: function() {
-        var type;
-        switch(this.$route.params.contentType) {
-          case '1xYw5JsIecuGE68mmGMg20':
-            type = 'image';
-            break;
-          case '38nK0gXXIccQ2IEosyAg6C':
-            type = 'author';
-            break;
-          case '7leLzv8hW06amGmke86y8G':
-            type = 'gallery';
-            break;
-        }
-        return type;
+      favorites: function () {
+        return this.$store.state.favorites;
       }
-    },
-    created: function() {
-      this.getEntries();
     },
     methods: {
-      getEntries: function() {
-        var _self = this;
-        this.$store.dispatch('getEntries', {
-          content_type: _self.$route.params.contentType
-        }).then(function(data) {
-          _self.entries = data;
-        });
+      removeFromFavorites: function(favorite) {
+        this.$store.dispatch('removeFavorite', favorite);
       }
-    },
-    watch: {
-      '$route' : 'getEntries'
     }
   };
+
+  // var Entries = {
+  //   name: 'Entries',
+  //   template: '#my-entries',
+  //   data: function() {
+  //     return {
+  //       entries: null
+  //     };
+  //   },
+  //   computed: {
+  //     contentTypeName: function() {
+  //       var type;
+  //       switch(this.$route.params.contentType) {
+  //         case '1xYw5JsIecuGE68mmGMg20':
+  //           type = 'image';
+  //           break;
+  //         case '38nK0gXXIccQ2IEosyAg6C':
+  //           type = 'author';
+  //           break;
+  //         case '7leLzv8hW06amGmke86y8G':
+  //           type = 'gallery';
+  //           break;
+  //       }
+  //       return type;
+  //     }
+  //   },
+  //   created: function() {
+  //     this.getEntries();
+  //   },
+  //   methods: {
+  //     getEntries: function() {
+  //       var _self = this;
+  //       this.$store.dispatch('getEntries', {
+  //         content_type: _self.$route.params.contentType
+  //       }).then(function(data) {
+  //         _self.entries = data;
+  //       });
+  //     }
+  //   },
+  //   watch: {
+  //     '$route' : 'getEntries'
+  //   }
+  // };
 
   var Entry = {
     data: function() {
@@ -78,11 +93,6 @@
           _self.entry = data;
           _self.getEntryAssets(data);
         });
-        // client.getEntry(entryId).then(function (entry) {
-        //   _self.entry = entry;
-
-        //   _self.getEntryAssets(entry);
-        // });
       },
       getEntryAssets: function(entry) {}
     },
@@ -91,89 +101,135 @@
     }
   };
 
-  var Image = Vue.extend({
-    name: 'Image',
-    template: '#my-image',
+  var IngredientType = Vue.extend({
+    name: 'Ingredient',
     props: ['entryId'],
     mixins: [Entry],
     data: function() {
       return {
-        photo: null
+        image: null
       };
     },
     methods: {
       getEntryAssets: function(entry) {
         var _self = this;
-        // Reset photo
-        this.photo = null;
+        // Reset image
+        this.image = null;
 
         this.$store.dispatch('getAsset', {
-          asset_id: entry.fields.photo.sys.id
+          asset_id: entry.fields.image.sys.id
         }).then(function(data) {
-          _self.photo = data;
+          _self.image = data;
         });
-        // client.getAsset(entry.fields.photo.sys.id).then(function (photo) {
-        //   _self.photo = photo;
-        // });
       }
     }
   });
 
-  var Author = Vue.extend({
-    name: 'Author',
-    template: '#my-author',
+  var Ingredient = Vue.extend({
+    name: 'Ingredient',
+    template: '#ingredient-template',
+    props: ['entryId'],
     mixins: [Entry],
     data: function() {
       return {
-        profilePhoto: null
+        image: null,
+        ingredientType: null
       };
+    },
+    computed: {
+      isFavorite: function () {
+        return this.$store.state.favorites.indexOf(this.entry) !== -1;
+      }
     },
     methods: {
       getEntryAssets: function(entry) {
+        if(typeof(entry.fields.ingredientType) !== 'undefined') {
+          this.getIngredientType(entry);
+        }
+      },
+      getIngredientType: function(entry) {
         var _self = this;
-        // Reset profilePhoto
-        this.profilePhoto = null;
-
+        if(typeof(entry.fields.ingredientType) !== 'undefined') {
+          this.$store.dispatch('getEntry', {
+            entry_id: entry.fields.ingredientType.sys.id
+          }).then(function(data) {
+            _self.ingredientType = data;
+            if(typeof(data.fields.image) !== 'undefined') {
+              _self.getIngredientTypeImage(data);
+            }
+          });
+        }
+      },
+      getIngredientTypeImage: function(entry) {
+        var _self = this;
         this.$store.dispatch('getAsset', {
-          asset_id: entry.fields.profilePhoto.sys.id
+          asset_id: entry.fields.image.sys.id
         }).then(function(data) {
-          _self.profilePhoto = data;
+          _self.image = data;
         });
-
-        // client.getAsset(entry.fields.profilePhoto.sys.id).then(function (profilePhoto) {
-        //   _self.profilePhoto = profilePhoto;
-        // });
+      },
+      addToFavorites: function() {
+        this.$store.dispatch('addFavorite', this.entry);
+      },
+      removeFromFavorites: function() {
+        this.$store.dispatch('removeFavorite', this.entry);
       }
     }
   });
 
-  var Gallery = Vue.extend({
-    name: 'Gallery',
-    template: '#my-gallery',
+  // var Author = Vue.extend({
+  //   name: 'Author',
+  //   template: '#my-author',
+  //   mixins: [Entry],
+  //   data: function() {
+  //     return {
+  //       profilePhoto: null
+  //     };
+  //   },
+  //   methods: {
+  //     getEntryAssets: function(entry) {
+  //       var _self = this;
+  //       // Reset profilePhoto
+  //       this.profilePhoto = null;
+
+  //       this.$store.dispatch('getAsset', {
+  //         asset_id: entry.fields.profilePhoto.sys.id
+  //       }).then(function(data) {
+  //         _self.profilePhoto = data;
+  //       });
+
+  //       // client.getAsset(entry.fields.profilePhoto.sys.id).then(function (profilePhoto) {
+  //       //   _self.profilePhoto = profilePhoto;
+  //       // });
+  //     }
+  //   }
+  // });
+
+  var Recipe = Vue.extend({
+    name: 'Recipe',
+    template: '#recipe-template',
     mixins: [Entry],
     components: {
-      'my-image': Image
+      'ingredient': Ingredient
     },
-    data: function() {
-      return {
-        coverImage: null
-      };
+    computed: {
+      description: function() {
+        return marked(this.entry.fields.description, { sanitize: true });
+      }
     },
     methods: {
       getEntryAssets: function(entry) {
         var _self = this;
         // Reset coverImage
-        this.coverImage = null;
+        this.image = null;
 
-        this.$store.dispatch('getAsset', {
-          asset_id: entry.fields.coverImage.sys.id
-        }).then(function(data) {
-          _self.coverImage = data;
-        });
-
-        // client.getAsset(entry.fields.coverImage.sys.id).then(function (coverImage) {
-        //   _self.coverImage = coverImage;
-        // });
+        if(typeof(entry.fields.images) !== 'undefined' && entry.fields.images.length) {
+          this.$store.dispatch('getAsset', {
+            asset_id: entry.fields.images[0].sys.id
+          }).then(function(data) {
+            _self.image = data;
+          });
+        }
       }
     }
   });
@@ -182,29 +238,29 @@
     routes: [
       {
         path: '*',
-        component: ContentTypes,
-        name: 'contentTypes',
+        component: RecipeList,
+        name: 'recipe-list',
         children: [
           {
-            path: '/:contentType',
-            name: 'entries',
-            component: Entries,
+            path: '/:contentType/:entryId',
+            name: 'recipe',
+            component: Recipe,
             children: [
-              {
-                path: '/:contentType/image/:entryId',
-                name: 'image',
-                component: Image
-              },
-              {
-                path: '/:contentType/author/:entryId',
-                name: 'author',
-                component: Author
-              },
-              {
-                path: '/:contentType/gallery/:entryId',
-                name: 'gallery',
-                component: Gallery
-              }
+              // {
+              //   path: '/:contentType/image/:entryId',
+              //   name: 'image',
+              //   component: Image
+              // },
+              // {
+              //   path: '/:contentType/author/:entryId',
+              //   name: 'author',
+              //   component: Author
+              // },
+              // {
+              //   path: '/:contentType/gallery/:entryId',
+              //   name: 'gallery',
+              //   component: Gallery
+              // }
             ]
           }
         ]
@@ -216,7 +272,8 @@
     el: '#app',
     store: store,
     components: {
-      'my-content-types': ContentTypes
+      'recipe-list': RecipeList,
+      'shopping-list': ShoppingList
     },
     router: router
   });
