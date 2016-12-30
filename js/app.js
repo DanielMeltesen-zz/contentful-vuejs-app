@@ -166,6 +166,49 @@
     }
   });
 
+  var Converter = Vue.extend({
+    name: 'Converter',
+    template: '#converter-template',
+    data: function() {
+      return {
+        ingredientName: 'flour',
+        sourceAmount: 2.5,
+        sourceUnit: 'cups',
+        targetUnit: 'grams',
+        targetAmount: 0
+      };
+    },
+    created: function() {
+      this.getConvertion();
+    },
+    methods: {
+      getConvertion: function(entry) {
+        var _self = this;
+        // http://docs.mashape.com/javascript
+        // https://market.mashape.com/spoonacular/recipe-food-nutrition#convert-amounts
+        $.ajax({
+            url: 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/convert', // The URL to the API. You can get this in the API page of the API you intend to consume
+            type: 'GET', // The HTTP Method, can be GET POST PUT DELETE etc
+            data: {
+              ingredientName: _self.ingredientName,
+              sourceAmount: _self.sourceAmount,
+              sourceUnit: _self.sourceUnit,
+              targetUnit: _self.targetUnit
+            }, // Additional parameters here
+            dataType: 'json',
+            success: function(data) { 
+              console.log(data); 
+              _self.targetAmount = data.targetAmount;
+            },
+            error: function(err) { console.log(err); },
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-Mashape-Authorization", "lHXslBUpU4mshcahxgT6fZAnrcsOp1jp6wvjsnIdS5fRf4CBAr"); // Enter here your Mashape key
+            }
+        });
+      }
+    }
+  });
+
   var router = new VueRouter({
     routes: [
       {
@@ -184,6 +227,12 @@
         name: 'shopping-list',
         component: ShoppingList,
         meta: { title: 'Indkøbsliste' }
+      },
+      {
+        path: '/convert',
+        name: 'convert',
+        component: Converter,
+        meta: { title: 'Mål' }
       }
     ]
   });

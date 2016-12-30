@@ -90,6 +90,22 @@
       </div>
     </script>
 
+    <script type="text/x-template" id="converter-template">
+      <div class="converter content-padded">
+        <label><small>Ingrediens</small></label>
+        <input type="search" placeholder="Search" v-model="ingredientName">
+        <label><small>Mængde ({{sourceUnit}})</small></label>
+        <input type="number" placeholder="Amount" v-model="sourceAmount">
+        <label><small>Fra (enhed)</small></label>
+        <input type="text" placeholder="Input unit" v-model="sourceUnit">
+        <label><small>Til (enhed)</small></label>
+        <input type="text" placeholder="Output unit" v-model="targetUnit">
+        <label><small>Resultat ({{targetUnit}})</small></label>
+        <input type="text" disabled="disabled" v-model="targetAmount">
+        <button class="btn btn-positive btn-block" v-on:click="getConvertion">Convert</button>
+      </div>
+    </script>
+
     <div id="app">
       <header class="bar bar-nav">
         <a class="icon icon-list pull-left" is="router-link" v-bind:to="{ name: 'recipe-list'}"></a>
@@ -101,6 +117,10 @@
       </div>
     </div>
 
+    <script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
     <!-- build:js -->
     <script src="assets/js/app.js"></script>
     <!-- endbuild -->
