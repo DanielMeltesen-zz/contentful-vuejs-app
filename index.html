@@ -71,19 +71,21 @@
     </script>
 
     <script type="text/x-template" id="recipe-template">
-      <div class="recipe content-padded" v-if="entry">
-        <div class="slider" v-if="image">
+      <div class="recipe" v-if="entry">
+        <div class="slider" v-if="entry.fields.images">
           <div class="slide-group">
             <div class="slide">
-              <img class="embed-responsive-item" v-bind:src="image.fields.file.url + '?h=200'" v-bind:alt="image.fields.title">
+              <img v-if="image" class="embed-responsive-item" v-bind:src="image.fields.file.url + '?h=200'" v-bind:alt="image.fields.title">
             </div>
           </div>
         </div>
-        <h3>{{entry.fields.title}}</h3>
-        <div v-if="description" v-html="description"></div>
-        <table v-if="entry.fields.ingredients">
-          <ingredient v-for="ingredient in entry.fields.ingredients" v-bind:entry-id="ingredient.sys.id"></ingredient>
-        </table>
+        <div class="content-padded">
+          <h3>{{entry.fields.title}}</h3>
+          <table v-if="entry.fields.ingredients">
+            <ingredient v-for="ingredient in entry.fields.ingredients" v-bind:entry-id="ingredient.sys.id"></ingredient>
+          </table>
+          <div v-if="description" v-html="description"></div>
+        </div>
       </div>
     </script>
 
